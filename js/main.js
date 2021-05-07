@@ -108,7 +108,7 @@ async function addCode(code) {
 async function checkCode(code) {
     const account = await getCurrentAccount();
     const message = await window.contract.methods.getProductDetails(code).call({ from: account });
-    // console.log(message.transactionHash);
+    console.log(message);
     if (message[0] != '') {
         document.getElementById('result').textContent = 'BarCode is:' + message[0];
         document.getElementById('resultOwner').textContent = 'Owner is:' + message[1];
