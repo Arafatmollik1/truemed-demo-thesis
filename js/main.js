@@ -23,6 +23,23 @@ async function loadContract() {
             },
             {
                 "inputs": [{
+                        "internalType": "string",
+                        "name": "_productID",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "_transactionHash",
+                        "type": "string"
+                    }
+                ],
+                "name": "settransactionHash",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [{
                     "internalType": "address",
                     "name": "_admin",
                     "type": "address"
@@ -57,13 +74,18 @@ async function loadContract() {
                         "internalType": "address",
                         "name": "",
                         "type": "address"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
                     }
                 ],
                 "stateMutability": "view",
                 "type": "function"
             }
         ],
-        '0x2C7724fC473454Dd41a453Eeea1360445d949BA7',
+        '0x33a1c501961fff8a95Adc85B83024D5C1559de6a',
     );
 }
 
@@ -100,18 +122,22 @@ async function addCode(code) {
     const account = await getCurrentAccount();
     const message = await window.contract.methods.setProductDetail(code).send({ from: account });
     alert('Transaction Confirmed');
-    alert('https://ropsten.etherscan.io/tx/' + message.transactionHash);
-    document.getElementById('result').textContent = 'https://ropsten.etherscan.io/tx/' + message.transactionHash;
+    alert('Confirm to Save Transaction?');
+    document.getElementById('result').textContent = 'https://ropsten.etherscan.io/tx/' + message.transactionHash ;
 
+    const thash = await window.contract.methods.settransactionHash(code, message.transactionHash).send({ from: account });
+    alert('Transaction Hash Saved ');
+    document.getElementById('result').textContent = 'Transaction Link: ' + 'https://ropsten.etherscan.io/tx/' + message.transactionHash;
     //window.location.replace('/');
 }
 async function checkCode(code) {
     const account = await getCurrentAccount();
     const message = await window.contract.methods.getProductDetails(code).call({ from: account });
-    console.log(message);
+    // console.log(message.transactionHash);
     if (message[0] != '') {
-        document.getElementById('result').textContent = 'BarCode is:' + message[0];
-        document.getElementById('resultOwner').textContent = 'Owner is:' + message[1];
+        document.getElementById('result').textContent = 'Information:' + message[0];
+        document.getElementById('uploaded').textContent = 'Uploaded by:' + message[1];
+        document.getElementById('thash').textContent = 'Transaction Link: ' +'https://ropsten.etherscan.io/tx/'+ message[2] ;
     } else {
         alert('Barcode is not Found');
     }
@@ -151,7 +177,7 @@ codeReader
                     alert(result.text + ' Will be added to the BlockChain');
                     addCode(result.text);
                     document.getElementById('result').textContent =
-                        result.text + ' BarCode have been added To BlockChain ';
+                        result.text + ' This info will be added To BlockChain ';
                 }
                 if (err && !(err instanceof ZXing.NotFoundException)) {
                     console.error(err);
