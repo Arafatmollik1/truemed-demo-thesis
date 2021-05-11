@@ -96,7 +96,7 @@ async function getCurrentAccount() {
 async function getadminAccount() {
     const account = await getCurrentAccount();
     const message = await window.contract.methods.admin().call({ from: account });
-    // console.log(message);
+    console.log(message);
     return message;
 }
 
